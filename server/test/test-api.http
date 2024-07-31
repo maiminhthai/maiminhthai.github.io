@@ -1,0 +1,121 @@
+# This file can be used for thesting the API with a dedicated Visual Studio Code extension.
+
+# USER API
+
+## Execute Log In
+POST http://localhost:3001/api/sessions HTTP/1.1
+content-type: application/json
+
+{
+    "username": "admin",
+    "password": "password"
+}
+###
+
+## Checking if user is still logged-in.
+GET http://localhost:3001/api/sessions/current HTTP/1.1
+###
+
+## Execute Log Out.
+DELETE http://localhost:3001/api/sessions/current HTTP/1.1
+###
+
+# Process API
+
+## Create process.
+POST http://localhost:3001/api/process HTTP/1.1
+content-type: application/json
+
+{
+    "budget": 200
+}
+###
+
+## Update phase.
+PUT http://localhost:3001/api/process HTTP/1.1
+###
+
+## Get process
+GET  http://localhost:3001/api/process HTTP/1.1
+###
+
+## Restart process
+DELETE  http://localhost:3001/api/process HTTP/1.1
+###
+
+# Proposal API
+
+## Add a proposal
+POST http://localhost:3001/api/proposals HTTP/1.1
+content-type: application/json
+
+{
+    "description": "simple description",
+    "cost": 100
+}
+###
+
+## Get proposal of user.
+GET http://localhost:3001/api/proposals/admin HTTP/1.1
+###
+
+## Update proposal.
+PUT http://localhost:3001/api/proposals/1 HTTP/1.1
+content-type: application/json
+
+{
+    "description": "simple description 2",
+    "cost": 100
+}
+###
+
+## Delete proposal
+DELETE  http://localhost:3001/api/proposals/3 HTTP/1.1
+###
+
+# Preference API
+
+## Add a preference
+POST http://localhost:3001/api/preferences HTTP/1.1
+content-type: application/json
+
+{
+    "proposalId": 3,
+    "score": 2
+}
+###
+
+## Update preference.
+PUT http://localhost:3001/api/preferences/1 HTTP/1.1
+content-type: application/json
+
+{
+    "score": 3
+}
+###
+
+## Get preferences of user.
+GET http://localhost:3001/api/preferences/admin HTTP/1.1
+###
+
+## Delete preferences
+DELETE  http://localhost:3001/api/preferences/1 HTTP/1.1
+###
+
+# Phase 3 API
+
+#Compute approved list
+PUT http://localhost:3001/api/process/approved HTTP/1.1
+##
+
+# Get all approved proposals.
+GET http://localhost:3001/api/approved HTTP/1.1
+###
+
+# Get all approved proposals.
+GET http://localhost:3001/api/approved HTTP/1.1
+###
+
+## Get all proposals.
+GET http://localhost:3001/api/proposals HTTP/1.1
+###
