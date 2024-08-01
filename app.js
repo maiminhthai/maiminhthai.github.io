@@ -6,11 +6,21 @@
 
 const INITIAL_FILMS = [
     // Data Structure: id, title, favorite, watchDate, rating
-    [1, "Pulp Fiction", true, "2024-04-10", 5],
-    [2, "21 Grams", true, "2024-04-17", 4],
-    [3, "Star Wars", false],
-    [4, "Matrix", true],
-    [5, "Shrek", false, "2024-04-21", 3]
+    [1, 'Big Data Processing and Analytics', 6, 30],
+    [2, 'Computer Architecture', 10, 23],
+    [3, 'Computer Network Technologies and Services', 6, 27],
+    [4, 'Data Science and Data Base Technology', 8, 28],
+    [5, 'Machine Learning and Pattern Regconigtion', 6, 26],
+    [6, 'Software Engineering', 8, 30],
+    [7, 'Web Application I', 6, 27],
+    [8, 'System and Devices Programming', 10, ''],
+    [9, 'Advance Machine Learning', 6, 25],
+    [10, 'Large Language Model', 6, 26],
+    [11, 'Computational Intelligent', 6, ''],
+    [12, 'Network Security', 6, 24],
+    [13, 'Machine Learning in Application', 6, 25],
+    [14, 'Thesis', 30, ''],
+
 ];
 
 // --- Selectors --- //
@@ -37,29 +47,12 @@ function createFilmInList(film) {
     const filmContent = `<div class="row gy-2">
                         <div class="col-6 col-xl-3 favorite-title d-flex gap-2 align-items-center">
                             ${film.title}
-                            <div class="d-xl-none actions">
-                                <i class="bi bi-pencil"></i>
-                                <i class="bi bi-trash"></i>
-                            </div>
                         </div>
-                        <div class="col-6 col-xl-3 text-end text-xl-center">
-                        <span class="custom-control custom-checkbox">
-                          <input type="checkbox" class="custom-control-input" id="films[${film.id}][favorite]" ${film.favorite && 'checked'}>
-                          <label class="custom-control-label" for="films[${film.id}][favorite]">Favorite</label>
-                        </span>
+                        <div class="col-3 col-xl-3 favorite-title d-flex gap-2 align-items-center">
+                            ${film.credit}
                         </div>
-                        <div class="col-4 col-xl-3 text-xl-center">
-                            ${film.watchDate ? film.formatWatchDate() : ''}
-                        </div>
-                        <div class="actions-container col-8 col-xl-3 text-end">
-                            <div class="rating">
-                                ${film.rating ? '<i class="bi bi-star-fill"></i> '.repeat(film.rating) : ''}
-                                ${'<i class="bi bi-star"></i> '.repeat(5 - (film.rating ?? 0))}
-                            </div>
-                            <div class="d-none d-xl-flex actions">
-                                <i class="bi bi-pencil"></i>
-                                <i class="bi bi-trash"></i>
-                            </div>
+                        <div class="col-3 col-xl-3 favorite-title d-flex gap-2 align-items-center">
+                            ${film.grade}
                         </div>
                     </div>`;
 
@@ -99,7 +92,7 @@ function clearFilmsList() {
  */
 function filterFilms(filterId, titleText, filterFn) {
     // if called without parameters, repeat last used filter
-    if (!filterId) ({filterId, titleText, filterFn} = filterFilms.currentFilter);
+    if (!filterId) ({ filterId, titleText, filterFn } = filterFilms.currentFilter);
 
     // Reset the appearance of all filters
     filterLinks.forEach(node => {
@@ -119,7 +112,7 @@ function filterFilms(filterId, titleText, filterFn) {
     createFilmsList(filterFn());
 
     // remember last used filter
-    filterFilms.currentFilter = {filterId, titleText, filterFn};
+    filterFilms.currentFilter = { filterId, titleText, filterFn };
 }
 
 
@@ -127,28 +120,9 @@ const filmLibrary = new FilmLibrary();
 INITIAL_FILMS.forEach(f => {
     filmLibrary.addNewFilm(new Film(...f));
 });
-createFilmsList(filmLibrary.filterAll());
+createFilmsList(filmLibrary.list);
 
 // --- Creating Event Listeners for filters --- //
-document.getElementById("filter-all").addEventListener('click', event =>
-    filterFilms('filter-all', 'All', filmLibrary.filterAll)
-);
-
-document.getElementById("filter-favorites").addEventListener('click', event =>
-    filterFilms('filter-favorites', 'Favorites', filmLibrary.filterByFavorite)
-);
-
-document.getElementById("filter-best").addEventListener('click', event =>
-    filterFilms('filter-best', 'Best Rated', filmLibrary.filterByBestRated)
-);
-
-document.getElementById("filter-seen-last-month").addEventListener('click', event =>
-    filterFilms('filter-seen-last-month', 'Seen Last Month', filmLibrary.filterBySeenLastMonth)
-);
-
-document.getElementById("filter-unseen").addEventListener('click', event =>
-    filterFilms('filter-unseen', 'Unseen', filmLibrary.filterByUnseen)
-);
 
 /******************
  *   Exercise 3   *
@@ -173,69 +147,30 @@ function addEventListenersToFilms() {
 }
 
 // --- Model --- //
-function Film(id, title, isFavorite = false, watchDate = null, rating = null, userId = 1) {
+function Film(id, title, credit, grade) {
     this.id = id;
     this.title = title;
-    this.favorite = isFavorite;
-    this.rating = rating;
-    // saved as dayjs object only if watchDate is truthy
-    this.watchDate = watchDate && dayjs(watchDate);
-    this.userId = userId;
-
-    // Filters
-    this.isBestRated = () => this.rating === 5;
-
-    this.isSeenLastMonth = () => {
-        if (!this.watchDate) return false; // no watchDate
-        const diff = (dayjs()).diff(this.watchDate, 'month', true);
-
-        return diff >=0 && diff < 1;
-    };
-
-    this.isUnseen = () => !this.watchDate;
-
-    this.formatWatchDate = (format = 'MMMM D,YYYY') => {
-        return this.watchDate ? this.watchDate.format(format) : undefined;
-    };
+    this.credit = credit;
+    this.grade = grade;
 }
 
 
 // --- Library --- //
-function FilmLibrary(){
+function FilmLibrary() {
     this.list = [];
 
     this.addNewFilm = (film) => {
-        if(!this.list.some(f => f.id === film.id))
+        if (!this.list.some(f => f.id === film.id))
             this.list.push(film);
         else
             throw new Error('Duplicate id');
     };
 
     this.deleteFilm = (id) => {
-        const newList = this.list.filter(function(film, index, arr) {
+        const newList = this.list.filter(function (film, index, arr) {
             return film.id !== id;
         })
         this.list = newList;
     }
 
-    // The filter methods create a new array with the elements that pass the test implemented by the provided function
-    this.filterAll = () => {
-        return this.list.filter( () => true);
-    }
-
-    this.filterByFavorite = () => {
-        return this.list.filter( (film) => film.favorite === true);
-    }
-
-    this.filterByBestRated = () => {
-        return this.list.filter( (film) => film.isBestRated() );
-    }
-
-    this.filterBySeenLastMonth = () => {
-        return this.list.filter( (film) => film.isSeenLastMonth() );
-    }
-
-    this.filterByUnseen = () => {
-        return this.list.filter( (film) => film.isUnseen() );
-    }
 }
